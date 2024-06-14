@@ -1,0 +1,8 @@
+[package]
+name = "Neutron"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rendering = {path = "./crates/rendering"}
+

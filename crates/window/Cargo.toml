@@ -1,0 +1,9 @@
+[package]
+name = "window"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.86"
+glfw = { version = "0.57.0", features = ["ash"] }
+raw-window-handle = "0.6.2"

@@ -1,4 +1,5 @@
 use anyhow::Result;
+mod octree;
 use smallvec::SmallVec;
 use std::{sync::Arc, time::Instant};
 use types::main_shader;
@@ -27,7 +28,7 @@ pub struct Scene {
     main_pipeline: Arc<ComputePipeline>,
     descriptor_sets: Vec<Arc<DescriptorSet>>,
     scene_descriptors: Arc<DescriptorSet>,
-    voxel_buffer: Subbuffer<[u32]>,
+    voxel_buffer: Subbuffer<[u64]>,
     time: Instant,
 }
 
@@ -108,9 +109,14 @@ impl Scene {
                     | MemoryTypeFilter::HOST_SEQUENTIAL_WRITE,
                 ..Default::default()
             },
-            (0..1000).map(|_| 0_u32),
+            (0..1000).map(|_| 0_u64),
         )
         .unwrap();
+
+        voxel_buffer.write().unwrap()[0] = types::ROOT;
+
+        println!("{:b}", (129526_u32 & 0x000000FF));
+
 
         let layout2 = &main_pipeline.layout().set_layouts()[1];
 

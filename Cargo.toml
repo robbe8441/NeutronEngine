@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.86"
+image = {version = "0.25.1", default-features=false, features=["png"]}
 log = "0.4.21"
 smallvec = "1.13.2"
 vulkano = { git = "https://github.com/vulkano-rs/vulkano", branch = "master", features = ["macros", "document_unchecked"], default-features = false }

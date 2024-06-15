@@ -1,4 +1,5 @@
 #version 430
+#extension GL_ARB_gpu_shader_int64: enable
 
 layout(local_size_x = 32, local_size_y = 32) in;
 
@@ -124,8 +125,6 @@ void main() {
     ray.d = rayDir;
     ray.invDir = 1.0f / rayDir;
     vec4 color = trace(ray, hit);
-
-    voxels[0] = 129526u;
 
     if (length(color) > 0.5f) {
         imageStore(screen, fragCoord, color);

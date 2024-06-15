@@ -4,5 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rendering = {path = "./crates/rendering"}
-
+anyhow = "1.0.86"
+log = "0.4.21"
+smallvec = "1.13.2"
+vulkano = { git = "https://github.com/vulkano-rs/vulkano", branch = "master", features = ["macros", "document_unchecked"], default-features = false }
+vulkano-shaders = "0.34.0"
+winit = "0.29.10"

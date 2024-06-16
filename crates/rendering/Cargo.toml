@@ -4,4 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ash = "0.38.0"
+anyhow = "1.0.86"
+ash = {version = "0.38.0", default-features=false, features=["linked", "debug", "std"]}
+ash-window = "0.13.0"
+raw-window-handle = "0.6.2"
+
+window = { path = "../window" }

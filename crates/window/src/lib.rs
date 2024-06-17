@@ -91,81 +91,77 @@ impl Window {
 }
 
 
-fn raw_window_handle<C: Context>(context: &C) -> RawWindowHandle {
-    #[cfg(target_family = "windows")]
-    {
-        use raw_window_handle::Win32WindowHandle;
-        use std::num::NonZeroIsize;
-        let (hwnd, hinstance): (*mut std::ffi::c_void, *mut std::ffi::c_void) = unsafe {
-            let hwnd= ffi::glfwGetWin32Window(context.window_ptr());
-            let hinstance: *mut c_void = winapi::um::libloaderapi::GetModuleHandleW(std::ptr::null()) as _;
-            (hwnd, hinstance as _)
-        };
-        let mut handle = Win32WindowHandle::new(NonZeroIsize::new(hwnd as isize).unwrap());
-        handle.hinstance = NonZeroIsize::new(hinstance as isize);
-        RawWindowHandle::Win32(handle)
-    }
-    #[cfg(all(any(target_os = "linux", target_os = "freebsd", target_os = "dragonfly"), not(feature = "wayland")))]
-    {
-        use raw_window_handle::XlibWindowHandle;
-        let window = unsafe { ffi::glfwGetX11Window(context.window_ptr()) as std::os::raw::c_ulong };
-        RawWindowHandle::Xlib(XlibWindowHandle::new(window))
-    }
-    #[cfg(all(any(target_os = "linux", target_os = "freebsd", target_os = "dragonfly"), feature = "wayland"))]
-    {
-        use raw_window_handle::WaylandWindowHandle;
-        use std::ptr::NonNull;
-        let surface = unsafe { ffi::glfwGetWaylandWindow(context.window_ptr()) };
-        let handle = WaylandWindowHandle::new(NonNull::new(surface).expect("wayland window surface is null"));
-        RawWindowHandle::Wayland(handle)
-    }
-    #[cfg(target_os = "macos")]
-    {
-        use objc2::msg_send_id;
-        use objc2::rc::Id;
-        use objc2::runtime::NSObject;
-        use raw_window_handle::AppKitWindowHandle;
-        use std::ptr::NonNull;
-        let ns_window: *mut NSObject =
-            unsafe { ffi::glfwGetCocoaWindow(context.window_ptr()) as *mut _ };
-        let ns_view: Option<Id<NSObject>> = unsafe { msg_send_id![ns_window, contentView] };
-        let ns_view = ns_view.expect("failed to access contentView on GLFW NSWindow");
-        let ns_view: NonNull<NSObject> = NonNull::from(&*ns_view);
-        let handle = AppKitWindowHandle::new(ns_view.cast());
-        RawWindowHandle::AppKit(handle)
-    }
-    #[cfg(target_os = "emscripten")]
-    {
-        let _ = context; // to avoid unused lint
-        let mut wh = raw_window_handle::WebWindowHandle::new(1);
-        // glfw on emscripten only supports a single window. so, just hardcode it
-        // sdl2 crate does the same. users can just add `data-raw-handle="1"` attribute to their canvas element
-        RawWindowHandle::Web(wh)
-    }
-}
 
-fn raw_display_handle() -> RawDisplayHandle {
-    #[cfg(target_family = "windows")]
-    {
-        use raw_window_handle::WindowsDisplayHandle;
-        RawDisplayHandle::Windows(WindowsDisplayHandle::new())
+#[allow(unused)]
+impl Window {
+    pub fn raw_window_handle(&self) -> RawWindowHandle {
+        #[cfg(target_family = "windows")]
+        {
+            use raw_window_handle::Win32WindowHandle;
+            use std::num::NonZeroIsize;
+            let (hwnd, hinstance): (*mut std::ffi::c_void, *mut std::ffi::c_void) = unsafe {
+                let hwnd= glfw::ffi::glfwGetWin32Window(self.handle);
+                let hinstance: *mut c_void = winapi::um::libloaderapi::GetModuleHandleW(std::ptr::null()) as _;
+                (hwnd, hinstance as _)
+            };
+            let mut handle = Win32WindowHandle::new(NonZeroIsize::new(hwnd as isize).unwrap());
+            handle.hinstance = NonZeroIsize::new(hinstance as isize);
+            RawWindowHandle::Win32(handle)
+        }
+        #[cfg(all(any(target_os = "linux", target_os = "freebsd", target_os = "dragonfly")))]
+        {
+            use raw_window_handle::XlibWindowHandle;
+            let window = unsafe { glfw::ffi::glfwGetX11Window(self.handle) as std::os::raw::c_ulong };
+            RawWindowHandle::Xlib(XlibWindowHandle::new(window))
+        }
+        #[cfg(target_os = "macos")]
+        {
+            use objc2::msg_send_id;
+            use objc2::rc::Id;
+            use objc2::runtime::NSObject;
+            use raw_window_handle::AppKitWindowHandle;
+            use std::ptr::NonNull;
+            let ns_window: *mut NSObject =
+                unsafe { ffi::glfwGetCocoaWindow(context.window_ptr()) as *mut _ };
+            let ns_view: Option<Id<NSObject>> = unsafe { msg_send_id![ns_window, contentView] };
+            let ns_view = ns_view.expect("failed to access contentView on GLFW NSWindow");
+            let ns_view: NonNull<NSObject> = NonNull::from(&*ns_view);
+            let handle = AppKitWindowHandle::new(ns_view.cast());
+            RawWindowHandle::AppKit(handle)
+        }
+        #[cfg(target_os = "emscripten")]
+        {
+            let _ = context; // to avoid unused lint
+            let mut wh = raw_window_handle::WebWindowHandle::new(1);
+            // glfw on emscripten only supports a single window. so, just hardcode it
+            // sdl2 crate does the same. users can just add `data-raw-handle="1"` attribute to their canvas element
+            RawWindowHandle::Web(wh)
+        }
     }
-    #[cfg(all(any(target_os = "linux", target_os = "freebsd", target_os = "dragonfly")))]
-    {
-        use raw_window_handle::WaylandDisplayHandle;
-        use std::ptr::NonNull;
-        let display = NonNull::new(unsafe { glfw::ffi::glfwGetWaylandDisplay() }).expect("wayland display is null");
-        let handle = WaylandDisplayHandle::new(display);
-        RawDisplayHandle::Wayland(handle)
-    }
-    #[cfg(target_os = "macos")]
-    {
-        use raw_window_handle::AppKitDisplayHandle;
-        RawDisplayHandle::AppKit(AppKitDisplayHandle::new())
-    }
-    #[cfg(target_os = "emscripten")]
-    {
-        RawDisplayHandle::Web(raw_window_handle::WebDisplayHandle::new())
+
+    pub fn raw_display_handle(&self) -> RawDisplayHandle {
+        #[cfg(target_family = "windows")]
+        {
+            use raw_window_handle::WindowsDisplayHandle;
+            RawDisplayHandle::Windows(WindowsDisplayHandle::new())
+        }
+        #[cfg(all(any(target_os = "linux", target_os = "freebsd", target_os = "dragonfly")))]
+        {
+            use raw_window_handle::XlibDisplayHandle;
+            use std::ptr::NonNull;
+            let display = NonNull::new(unsafe { glfw::ffi::glfwGetX11Display() });
+            let handle = XlibDisplayHandle::new(display, 0);
+            RawDisplayHandle::Xlib(handle)
+        }
+        #[cfg(target_os = "macos")]
+        {
+            use raw_window_handle::AppKitDisplayHandle;
+            RawDisplayHandle::AppKit(AppKitDisplayHandle::new())
+        }
+        #[cfg(target_os = "emscripten")]
+        {
+            RawDisplayHandle::Web(raw_window_handle::WebDisplayHandle::new())
+        }
     }
 }
 

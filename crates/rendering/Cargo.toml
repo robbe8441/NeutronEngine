@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.86"
-ash = {version = "0.38.0", default-features=false, features=["linked", "debug", "std"]}
+ash = "0.38.0"
 ash-window = "0.13.0"
 raw-window-handle = "0.6.2"
 

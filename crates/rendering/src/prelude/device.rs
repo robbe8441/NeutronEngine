@@ -1,7 +1,7 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use std::sync::Arc;
 
-use crate::prelude::{Instance, SurfaceLoader};
+use crate::prelude::Instance;
 use ash::vk;
 
 #[allow(unused)]
@@ -20,37 +20,24 @@ pub struct Queues {
 }
 
 impl Device {
-    pub fn new(instance: Arc<Instance>, surface: Arc<SurfaceLoader>) -> Result<Arc<Self>> {
+    pub fn new(instance: Arc<Instance>) -> Result<Arc<Self>> {
         let physical_devices = unsafe { instance.as_raw().enumerate_physical_devices() }?;
 
-        let (physical_device, queue_family_index) = unsafe {
+        let queue_family_index = 0;
+
+        let physical_device = unsafe {
             physical_devices
-                .iter()
-                .find_map(|pdevice| {
+                .into_iter()
+                .find(|pdevice| {
                     instance
                         .as_raw()
                         .get_physical_device_queue_family_properties(*pdevice)
                         .iter()
-                        .enumerate()
-                        .find_map(|(index, info)| {
-                            let supports_graphic_and_surface =
-                                info.queue_flags.contains(vk::QueueFlags::GRAPHICS)
-                                    && surface
-                                        .as_raw()
-                                        .get_physical_device_surface_support(
-                                            *pdevice,
-                                            index as u32,
-                                            surface.surface(),
-                                        )
-                                        .unwrap();
-                            if supports_graphic_and_surface {
-                                Some((*pdevice, index as u32))
-                            } else {
-                                None
-                            }
-                        })
+                        .filter(|info| info.queue_flags.contains(vk::QueueFlags::GRAPHICS))
+                        .count()
+                        > 0
                 })
-                .expect("Couldn't find suitable device.")
+                .context("Couldn't find suitable device.")?
         };
 
         let device_extension_names_raw = [
@@ -78,8 +65,7 @@ impl Device {
             instance
                 .as_raw()
                 .create_device(physical_device, &device_create_info, None)
-        }
-        .unwrap();
+        }?;
 
         let graphics = unsafe { device.get_device_queue(queue_family_index, 0) };
         let compute = unsafe { device.get_device_queue(queue_family_index, 1) };
@@ -94,19 +80,33 @@ impl Device {
         .into())
     }
 
-    pub fn as_raw(&self) -> ash::Device {
-        self.handle.clone()
+    pub fn as_raw(&self) -> &ash::Device {
+        &self.handle
     }
-    pub fn physical(&self) -> vk::PhysicalDevice {
-        self.physical_device.clone()
+    pub fn as_raw_ref(&self) -> &ash::Device {
+        &self.handle
     }
-    pub fn instance(&self) -> Arc<Instance> {
-        self.instance.clone()
+    pub fn physical(&self) -> &vk::PhysicalDevice {
+        &self.physical_device
+    }
+    pub fn instance(&self) -> &Arc<Instance> {
+        &self.instance
+    }
+    pub fn queue_family_index(&self) -> u32 {
+        self.queue_family_index
+    }
+
+    // TODO : add better queues
+    pub fn queue(&self) -> vk::Queue {
+        self.queues.graphics
     }
 }
 
 impl Drop for Device {
     fn drop(&mut self) {
-        unsafe { self.handle.destroy_device(None) }
+        unsafe {
+            self.handle.device_wait_idle().unwrap();
+            self.handle.destroy_device(None);
+        }
     }
 }

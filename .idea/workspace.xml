@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5985c248-0b24-4b3d-827f-909e9d72acc2" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/crates/rendering/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/crates/rendering/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crates/rendering/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/crates/rendering/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crates/rendering/src/prelude/device.rs" beforeDir="false" afterPath="$PROJECT_DIR$/crates/rendering/src/prelude/device.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crates/rendering/src/prelude/instance.rs" beforeDir="false" afterPath="$PROJECT_DIR$/crates/rendering/src/prelude/instance.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crates/rendering/src/prelude/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/crates/rendering/src/prelude/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crates/rendering/src/prelude/surface.rs" beforeDir="false" afterPath="$PROJECT_DIR$/crates/rendering/src/prelude/surface.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crates/rendering/src/prelude/swapchain.rs" beforeDir="false" afterPath="$PROJECT_DIR$/crates/rendering/src/prelude/swapchain.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crates/window/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/crates/window/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crates/window/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/crates/window/src/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/load_renderer/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/examples/load_renderer/src/main.rs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="vkhh4l5g" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2i3kR9WRZhJwz9tT3EsXsJ2bkoA" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "git-widget-placeholder": "main",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.first.attach.projects": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RustProjectSettings">
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5985c248-0b24-4b3d-827f-909e9d72acc2" name="Changes" comment="" />
+      <created>1718726639851</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1718726639851</updated>
+      <workItem from="1718726643003" duration="6000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

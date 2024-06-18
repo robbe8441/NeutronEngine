@@ -6,16 +6,14 @@ use anyhow::{anyhow, Result};
 pub mod events;
 
 use glfw::ffi::GLFWwindow;
-use raw_window_handle::{HasRawWindowHandle, RawDisplayHandle, RawWindowHandle};
+use raw_window_handle::{RawDisplayHandle, RawWindowHandle};
 
 pub struct Window {
     handle: *mut GLFWwindow,
-    // meta: WindowMetaData,
 }
 
 unsafe impl Send for Window {}
 unsafe impl Sync for Window {}
-
 
 
 impl Window {

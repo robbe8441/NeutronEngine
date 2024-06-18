@@ -1,8 +1,8 @@
-use std::sync::Arc;
+use std::{ffi::c_char, sync::Arc};
 
 use crate::utils::ConvertCStr;
 
-use anyhow::{Ok, Result};
+use anyhow::Result;
 use ash::{ext::debug_utils, vk};
 use raw_window_handle::RawDisplayHandle;
 
@@ -12,13 +12,21 @@ pub struct Instance {
 }
 
 impl Instance {
-    pub fn new(display_handle: RawDisplayHandle) -> Result<Arc<Self>> {
-        let entry = ash::Entry::linked();
+    pub fn new() -> Result<Arc<Self>> {
+        Self::from_extensions(vec![debug_utils::NAME.as_ptr()])
+    }
 
+    pub fn from_display_handle(display_handle: RawDisplayHandle) -> Result<Arc<Self>> {
         let mut extension_names = ash_window::enumerate_required_extensions(display_handle)
             .unwrap()
             .to_vec();
         extension_names.push(debug_utils::NAME.as_ptr());
+
+        Self::from_extensions(extension_names)
+    }
+
+    pub fn from_extensions(names: Vec<*const c_char>) -> Result<Arc<Self>> {
+        let entry = unsafe { ash::Entry::load() }?;
 
         let application_info = vk::ApplicationInfo::default()
             .engine_name("Neutron Engine\n".to_cstr_unchecked())
@@ -26,7 +34,7 @@ impl Instance {
             .api_version(vk::API_VERSION_1_3);
 
         let create_info = vk::InstanceCreateInfo::default()
-            .enabled_extension_names(&extension_names)
+            .enabled_extension_names(&names)
             .application_info(&application_info);
 
         let instance = unsafe { entry.create_instance(&create_info, None) }?;
@@ -38,16 +46,18 @@ impl Instance {
         .into())
     }
 
-    pub fn as_raw(&self) -> ash::Instance {
-        self.handle.clone()
+    pub fn as_raw(&self) -> &ash::Instance {
+        &self.handle
     }
-    pub fn entry(&self) -> ash::Entry {
-        self.entry.clone()
+    pub fn entry(&self) -> &ash::Entry {
+        &self.entry
     }
 }
 
 impl Drop for Instance {
     fn drop(&mut self) {
-        unsafe { self.handle.destroy_instance(None) };
+        unsafe {
+            self.handle.destroy_instance(None);
+        };
     }
 }

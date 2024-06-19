@@ -4,7 +4,7 @@ use crate::utils::ConvertCStr;
 
 use anyhow::Result;
 use ash::{ext::debug_utils, vk};
-use raw_window_handle::RawDisplayHandle;
+
 
 pub struct Instance {
     handle: ash::Instance,
@@ -16,7 +16,7 @@ impl Instance {
         Self::from_extensions(vec![debug_utils::NAME.as_ptr()])
     }
 
-    pub fn from_display_handle(display_handle: RawDisplayHandle) -> Result<Arc<Self>> {
+    pub fn from_display_handle(display_handle: raw_window_handle::RawDisplayHandle) -> Result<Arc<Self>> {
         let mut extension_names = ash_window::enumerate_required_extensions(display_handle)
             .unwrap()
             .to_vec();

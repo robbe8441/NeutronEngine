@@ -8,5 +8,5 @@ anyhow = "1.0.86"
 ash = "0.38.0"
 ash-window = "0.13.0"
 raw-window-handle = "0.6.2"
+winit = "0.29.2"
 
-window = { path = "../window" }

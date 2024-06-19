@@ -45,7 +45,7 @@ impl Swapchain {
             .min_image_count(desired_image_count)
             .image_color_space(surface_format.color_space)
             .image_format(surface_format.format)
-            .image_extent(surface.resolution())
+            .image_extent(surface.size())
             .image_usage(vk::ImageUsageFlags::COLOR_ATTACHMENT)
             .image_sharing_mode(vk::SharingMode::EXCLUSIVE)
             .pre_transform(pre_transform)
@@ -72,7 +72,7 @@ impl Swapchain {
     }
 
     pub fn resolution(&self) -> vk::Extent2D {
-        self.surface.resolution()
+        self.surface.size()
     }
     pub fn format(&self) -> vk::SurfaceFormatKHR {
         self.surface.infos().format

@@ -1,16 +1,18 @@
-use anyhow::{Ok, Result};
+use anyhow::Result;
+use raw_window_handle::HasDisplayHandle;
 use std::sync::{Arc, RwLock};
 
 use crate::prelude::{Device, Instance};
 use ash::vk;
+use winit::window::Window;
 
 pub struct Surface {
     handle: vk::SurfaceKHR,
     loader: ash::khr::surface::Instance,
-    window: Arc<window::Window>,
 
     infos: RwLock<Option<SurfaceInfos>>,
     instance: Arc<Instance>,
+    window: Arc<Window>,
 }
 
 #[derive(Clone)]
@@ -21,13 +23,13 @@ pub struct SurfaceInfos {
 }
 
 impl Surface {
-    pub fn new(instance: Arc<Instance>, window: Arc<window::Window>) -> Result<Arc<Self>> {
+    pub fn new(instance: Arc<Instance>, window: Arc<Window>) -> Result<Arc<Self>> {
         let handle = unsafe {
             ash_window::create_surface(
                 instance.entry(),
                 instance.as_raw(),
-                window.raw_display_handle(),
-                window.raw_window_handle(),
+                window.display_handle()?.as_raw(),
+                window.window_handle()?.as_raw(),
                 None,
             )
         }?;
@@ -47,15 +49,15 @@ impl Surface {
     pub fn as_raw(&self) -> &vk::SurfaceKHR {
         &self.handle
     }
-    pub fn window(&self) -> Arc<window::Window> {
+    pub fn window(&self) -> Arc<Window> {
         self.window.clone()
     }
 
-    pub fn resolution(&self) -> vk::Extent2D {
-        let (width, height) = self.window.get_size();
+    pub fn size(&self) -> vk::Extent2D {
+        let size = self.window.inner_size();
         vk::Extent2D {
-            width: width as u32,
-            height: height as u32,
+            width: size.width,
+            height: size.height,
         }
     }
 

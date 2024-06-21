@@ -95,6 +95,9 @@ impl Device {
     pub fn queue_family_index(&self) -> u32 {
         self.queue_family_index
     }
+    pub fn physical_device_memory_properties(&self) -> vk::PhysicalDeviceMemoryProperties {
+        unsafe { self.instance.as_raw().get_physical_device_memory_properties(self.physical_device) }
+    }
 
     // TODO : add better queues
     pub fn queue(&self) -> vk::Queue {

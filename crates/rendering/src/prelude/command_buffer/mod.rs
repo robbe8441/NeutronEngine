@@ -10,13 +10,13 @@ use crate::prelude::Device;
 pub struct CommandBuffer {
     handle: vk::CommandBuffer,
     device: Arc<Device>,
-    allocator: Arc<CommandBufferAllocator>,
+    allocator: Arc<CommandPool>,
 }
 
 #[allow(unused)]
 impl CommandBuffer {
     pub fn new_count(
-        allocator: Arc<CommandBufferAllocator>,
+        allocator: Arc<CommandPool>,
         device: Arc<Device>,
         count: u32,
     ) -> Result<Vec<Self>> {
@@ -41,7 +41,7 @@ impl CommandBuffer {
             .collect::<Vec<_>>())
     }
 
-    pub fn new(allocator: Arc<CommandBufferAllocator>, device: Arc<Device>) -> Result<Self> {
+    pub fn new(allocator: Arc<CommandPool>, device: Arc<Device>) -> Result<Self> {
         Ok(Self::new_count(allocator, device, 1)?
             .into_iter()
             .last()
@@ -60,6 +60,13 @@ impl CommandBuffer {
                 .begin_command_buffer(self.handle, &begin_info)
         }
         .unwrap();
+    }
+
+
+    pub fn fill_image(&self, image: vk::Image, leyout: vk::ImageLayout, clear_color: vk::ClearColorValue, ranges: vk::ImageSubresourceRange) {
+        unsafe {
+            self.device.as_raw().cmd_clear_color_image(self.handle, image, leyout, &clear_color, &[ranges])
+        }
     }
 
     /// end recording

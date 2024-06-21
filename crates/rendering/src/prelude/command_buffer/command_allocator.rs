@@ -1,15 +1,15 @@
 use anyhow::Result;
 use std::sync::Arc;
 
-use crate::prelude::{CommandBuffer, Device};
+use crate::prelude::Device;
 use ash::vk;
 
-pub struct CommandBufferAllocator {
+pub struct CommandPool {
     handle: vk::CommandPool,
     device: Arc<Device>,
 }
 
-impl CommandBufferAllocator {
+impl CommandPool {
     pub fn new(device: Arc<Device>) -> Result<Arc<Self>> {
         let pool_create_info = vk::CommandPoolCreateInfo::default()
             .flags(vk::CommandPoolCreateFlags::TRANSIENT)
@@ -30,7 +30,7 @@ impl CommandBufferAllocator {
     }
 }
 
-impl Drop for CommandBufferAllocator {
+impl Drop for CommandPool {
     fn drop(&mut self) {
         unsafe { self.device.as_raw().destroy_command_pool(self.handle, None) };
     }

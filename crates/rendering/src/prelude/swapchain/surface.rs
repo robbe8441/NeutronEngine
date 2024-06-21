@@ -1,5 +1,5 @@
 use anyhow::Result;
-use raw_window_handle::HasDisplayHandle;
+use raw_window_handle::{HasDisplayHandle, HasWindowHandle};
 use std::sync::{Arc, RwLock};
 
 use crate::prelude::{Device, Instance};

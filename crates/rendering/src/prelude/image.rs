@@ -1,20 +1,47 @@
+use crate::prelude::Device;
+use anyhow::Result;
+use ash::vk;
 use std::sync::Arc;
 
-use ash::vk;
-use crate::prelude::Device;
+pub use vk::{ImageCreateInfo, ImageViewCreateInfo};
 
 
+#[allow(unused)]
 pub struct Image {
     handle: vk::Image,
-    device: Arc<Device>
+    device: Arc<Device>,
+    info: ImageCreateInfo<'static>,
 }
 
+impl Image {
+    pub fn new(device: Arc<Device>, info: ImageCreateInfo<'static>) -> Result<Arc<Self>> {
+        let handle = unsafe { device.as_raw().create_image(&info, None) }?;
 
+        Ok(Self { device, handle, info }.into())
+    }
+}
+
+#[allow(unused)]
 pub struct ImageView {
     handle: vk::ImageView,
+    info: ImageViewCreateInfo<'static>,
+    device: Arc<Device>,
+    // we need to store the image here just to ensure that its not being droped
     image: Arc<Image>,
-    device: Arc<Device>
 }
+
+impl ImageView {
+
+    pub fn new(device: Arc<Device>, image: Arc<Image>, info: ImageViewCreateInfo<'static>) -> Result<Arc<Self>> {
+        let handle = unsafe { device.as_raw().create_image_view(&info, None) }?;
+
+        Ok( Self { handle, info, device, image }.into() )
+    }
+}
+
+
+
+
 
 
 
@@ -29,9 +56,3 @@ impl Drop for Image {
         unsafe { self.device.as_raw().destroy_image(self.handle, None) };
     }
 }
-
-
-
-
-
-

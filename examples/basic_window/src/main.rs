@@ -2,8 +2,9 @@ use std::sync::Arc;
 
 use neutron::*;
 use rendering::prelude::{
-    BufferCreateInfo, BufferUsageFlags, CommandBuffer, CommandPool, Device, Fence, Instance,
-    MemoryPropertyFlags, Subbuffer, Surface, Swapchain,
+    BufferCreateInfo, BufferUsageFlags, CommandBuffer, CommandPool, DescriptorPool,
+    DescriptorSetLayout, DescriptorSets, DescriptorType, Device, Fence, Instance,
+    MemoryPropertyFlags, ShaderStageFlags, Subbuffer, Surface, Swapchain, VKDebugger,
 };
 use winit::{event_loop::EventLoop, window::Window};
 
@@ -18,11 +19,13 @@ fn main() {
 
     let instance = Instance::from_display_handle(&event_loop).unwrap();
 
+    let _debugger = VKDebugger::new(instance.clone());
+
     let surface = Surface::new(instance.clone(), window.clone()).unwrap();
 
     let device = Device::new(instance.clone()).unwrap();
 
-    let fence = Fence::new(device.clone());
+    let _fence = Fence::new(device.clone());
 
     let data = &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -38,10 +41,19 @@ fn main() {
     dbg!(res);
 
     let swapchain = Swapchain::new(device.clone(), surface.clone()).unwrap();
-
     let command_pool = CommandPool::new(device.clone()).unwrap();
-
     let command_buffer = CommandBuffer::new(command_pool.clone(), device.clone()).unwrap();
+
+    let descriptors = &[DescriptorType {
+        binding: 0,
+        count: 0,
+        ty: neutron::rendering::prelude::VkDescriptorType::STORAGE_BUFFER,
+        stage_flags: ShaderStageFlags::COMPUTE,
+    }];
+
+    let descriptor_pool = DescriptorPool::new(device.clone(), descriptors).unwrap();
+    let descriptor_layout = DescriptorSetLayout::new(device.clone(), descriptors).unwrap();
+    let _descriptor_sets = DescriptorSets::new(descriptor_pool.clone(), &[descriptor_layout]);
 
     command_buffer.begin();
 
@@ -62,5 +74,5 @@ fn main() {
 
             _ => {}
         })
-        .unwrap()
+        .unwrap();
 }

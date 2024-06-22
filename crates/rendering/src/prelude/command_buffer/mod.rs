@@ -3,9 +3,11 @@ mod command_allocator;
 pub use command_allocator::*;
 
 use anyhow::Result;
-use ash::vk;
+pub use ash::vk; // TODO, make private
 
 use crate::prelude::Device;
+
+pub use vk::{RenderingInfo, RenderingAttachmentInfo};
 
 pub struct CommandBuffer {
     handle: vk::CommandBuffer,
@@ -62,11 +64,12 @@ impl CommandBuffer {
         .unwrap();
     }
 
+    pub fn begin_rendering(&self, info: &vk::RenderingInfo) {
+        unsafe { self.device.as_raw().cmd_begin_rendering(self.handle, info) }
+    }
 
-    pub fn fill_image(&self, image: vk::Image, leyout: vk::ImageLayout, clear_color: vk::ClearColorValue, ranges: vk::ImageSubresourceRange) {
-        unsafe {
-            self.device.as_raw().cmd_clear_color_image(self.handle, image, leyout, &clear_color, &[ranges])
-        }
+    pub fn begin_render_pass(&self, info: &vk::RenderPassBeginInfo, contents: vk::SubpassContents ) {
+        unsafe { self.device.as_raw().cmd_begin_render_pass(self.handle, info, contents) }
     }
 
     /// end recording

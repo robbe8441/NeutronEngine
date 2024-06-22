@@ -107,8 +107,8 @@ impl Swapchain {
     pub fn resolution(&self) -> vk::Extent2D {
         self.surface.size()
     }
-    pub fn format(&self) -> vk::SurfaceFormatKHR {
-        self.surface.infos().format
+    pub fn format(&self) -> vk::Format {
+        self.surface.infos().format.format
     }
 }
 
